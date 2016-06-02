@@ -12,7 +12,7 @@ function Renderer(web3, editor, compiler, updateFiles) {
   // Forcing all of this setup into its own scope.
   (function(){
     function executionContextChange (ev) {
-      if (ev.target.value == 'web3' && !confirm("Are you sure you want to connect to a local ethereum node?") ) {
+      if (ev.target.value === 'web3' && !confirm("Are you sure you want to connect to a local ethereum node?") ) {
         $vmToggle.get(0).checked = true;
         executionContext = 'vm';
       } else {
@@ -24,7 +24,7 @@ function Renderer(web3, editor, compiler, updateFiles) {
 
     function setProviderFromEndpoint() {
       var endpoint = $web3endpoint.val();
-      if (endpoint == 'ipc')
+      if (endpoint === 'ipc')
         web3.setProvider(new web3.providers.IpcProvider());
       else
         web3.setProvider(new web3.providers.HttpProvider(endpoint));
@@ -43,7 +43,7 @@ function Renderer(web3, editor, compiler, updateFiles) {
     $web3Toggle.on('change', executionContextChange );
     $web3endpoint.on('change', function() {
       setProviderFromEndpoint();
-      if (executionContext == 'web3') compiler.compile();
+      if (executionContext === 'web3') compiler.compile();
     });
   })();
 
@@ -57,7 +57,7 @@ function Renderer(web3, editor, compiler, updateFiles) {
       var errFile = err[1];
       var errLine = parseInt(err[2], 10) - 1;
       var errCol = err[4] ? parseInt(err[4], 10) : 0;
-      if (errFile == '' || errFile == editor.getCacheFile()) {
+      if (errFile === '' || errFile === editor.getCacheFile()) {
         compiler.addAnnotation({
           row: errLine,
           column: errCol,
@@ -66,7 +66,7 @@ function Renderer(web3, editor, compiler, updateFiles) {
         });
       }
       $error.click(function(ev){
-        if (errFile != '' && errFile != editor.getCacheFile() && editor.hasFile(errFile)) {
+        if (errFile !== '' && errFile !== editor.getCacheFile() && editor.hasFile(errFile)) {
           // Switch to file
           editor.setCacheFile(errFile);
           updateFiles();
@@ -201,17 +201,17 @@ function Renderer(web3, editor, compiler, updateFiles) {
   };
 
   var formatAssemblyText = function(asm, prefix, source) {
-    if (typeof(asm) == typeof('') || asm === null || asm === undefined)
+    if (typeof(asm) === typeof('') || asm === null || asm === undefined)
       return prefix + asm + '\n';
     var text = prefix + '.code\n';
     $.each(asm['.code'], function(i, item) {
       var v = item.value === undefined ? '' : item.value;
       var src = '';
-      if (item.begin !== undefined && item.end != undefined)
+      if (item.begin !== undefined && item.end !== undefined)
         src = source.slice(item.begin, item.end).replace('\n', '\\n', 'g');
       if (src.length > 30)
         src = src.slice(0, 30) + '...';
-      if (item.name != 'tag')
+      if (item.name !== 'tag')
         text += '  ';
       text += prefix + item.name + ' ' + v + '\t\t\t' + src +  '\n';
     });
@@ -246,7 +246,7 @@ function Renderer(web3, editor, compiler, updateFiles) {
     "\n     gas: 3000000"+
     "\n   }, function(e, contract){"+
     "\n    console.log(e, contract);"+
-    "\n    if (typeof contract.address != 'undefined') {"+
+    "\n    if (typeof contract.address !== 'undefined') {"+
     "\n         console.log('Contract mined! address: ' + contract.address + ' transactionHash: ' + contract.transactionHash);" +
     "\n    }" +
     "\n })";
@@ -258,7 +258,7 @@ function Renderer(web3, editor, compiler, updateFiles) {
   function getConstructorInterface(abi) {
     var funABI = {'name':'','inputs':[],'type':'constructor','outputs':[]};
     for (var i = 0; i < abi.length; i++)
-      if (abi[i].type == 'constructor') {
+      if (abi[i].type === 'constructor') {
         funABI.inputs = abi[i].inputs || [];
         break;
       }

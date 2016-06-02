@@ -14,7 +14,7 @@ var Compiler = require('./app/compiler');
 var filesToLoad = null;
 var loadFilesCallback = function(files) { filesToLoad = files; }; // will be replaced later
 window.addEventListener("message", function(ev) {
-	if (typeof ev.data == typeof [] && ev.data[0] === "loadFiles") {
+	if (typeof ev.data === typeof [] && ev.data[0] === "loadFiles") {
 		loadFilesCallback(ev.data[1]);
 	}
 }, false);
@@ -25,7 +25,7 @@ var run = function() {
 		for (var f in files) {
 			var key = utils.fileKey(f);
 			var content = files[f].content;
-			if (key in window.localStorage && window.localStorage[key] != content) {
+			if (key in window.localStorage && window.localStorage[key] !== content) {
 				var count = '';
 				var otherKey = key + count;
 				while ((key + count) in window.localStorage) count = count - 1;
@@ -48,7 +48,7 @@ var run = function() {
 	// ------------------ query params (hash) ----------------
 
 	function syncQueryParams() {
-	  $('#optimize').attr( 'checked', (queryParams.get().optimize == "true") );
+	  $('#optimize').attr( 'checked', (queryParams.get().optimize === "true") );
 	}
 
 	window.onhashchange = syncQueryParams;
@@ -212,7 +212,7 @@ var run = function() {
 
 	function activeFileTab() {
 		var name = editor.getCacheFile();
-		return $('#files .file').filter(function(){ return $(this).find('.name').text() == name; });
+		return $('#files .file').filter(function(){ return $(this).find('.name').text() === name; });
 	}
 
 
@@ -417,7 +417,7 @@ var run = function() {
 		setVersionText("(loading)");
 		queryParams.update({version: version});
 		var isFirefox = typeof InstallTrigger !== 'undefined';
-		if (document.location.protocol != 'file:' && Worker !== undefined && isFirefox) {
+		if (document.location.protocol !== 'file:' && Worker !== undefined && isFirefox) {
 			// Workers cannot load js on "file:"-URLs and we get a
 			// "Uncaught RangeError: Maximum call stack size exceeded" error on Chromium,
 			// resort to non-worker version in that case.

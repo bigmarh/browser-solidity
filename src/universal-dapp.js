@@ -78,7 +78,7 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
 };
 
 UniversalDApp.prototype.render = function () {
-    if (this.contracts.length == 0) {
+    if (this.contracts.length === 0) {
         this.$el.append( this.getABIInputForm() );
     } else {
 
@@ -111,7 +111,7 @@ UniversalDApp.prototype.render = function () {
 
 UniversalDApp.prototype.getContractByName = function(contractName) {
     for (var c in this.contracts)
-        if (this.contracts[c].name == contractName)
+        if (this.contracts[c].name === contractName)
             return this.contracts[c];
     return null;
 };
@@ -162,7 +162,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
         if (a.name > b.name) return -1;
         else return 1;
     }).sort(function(a,b){
-        if (a.constant == true) return -1;
+        if (a.constant === true) return -1;
         else return 1;
     });
     var web3contract = web3.eth.contract(abi);
@@ -249,7 +249,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
         }));
 
         $.each(abi, function(i, funABI) {
-            if (funABI.type != 'function') return;
+            if (funABI.type !== 'function') return;
             // @todo getData cannot be used with overloaded functions
             $instance.append(self.getCallButton({
                 abi: funABI,
@@ -284,7 +284,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
 UniversalDApp.prototype.getConstructorInterface = function(abi) {
     var funABI = {'name':'','inputs':[],'type':'constructor','outputs':[]};
     for (var i = 0; i < abi.length; i++)
-        if (abi[i].type == 'constructor') {
+        if (abi[i].type === 'constructor') {
             funABI.inputs = abi[i].inputs || [];
             break;
         }
@@ -300,7 +300,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
 
     var inputs = '';
     $.each(args.abi.inputs, function(i, inp) {
-        if (inputs != '') inputs += ', ';
+        if (inputs !== '') inputs += ', ';
         inputs += inp.type + ' ' + inp.name;
     });
     var inputField = $('<input/>').attr('placeholder', inputs).attr('title', inputs);
@@ -376,9 +376,9 @@ UniversalDApp.prototype.getCallButton = function(args) {
                 return;
             }
         }
-        if (data.slice(0, 9) == 'undefined')
+        if (data.slice(0, 9) === 'undefined')
             data = data.slice(9);
-        if (data.slice(0, 2) == '0x') data = data.slice(2);
+        if (data.slice(0, 2) === '0x') data = data.slice(2);
 
         replaceOutput($result, $('<span>Waiting for transaction to be mined...</span>'));
 
@@ -507,7 +507,7 @@ UniversalDApp.prototype.linkBytecode = function(contractName, cb) {
         if (err) return cb(err);
         var libLabel = '__' + libraryName + Array(39 - libraryName.length).join('_');
         var hexAddress = address.toString('hex');
-        if (hexAddress.slice(0, 2) == '0x') hexAddress = hexAddress.slice(2);
+        if (hexAddress.slice(0, 2) === '0x') hexAddress = hexAddress.slice(2);
         hexAddress = Array(40 - hexAddress.length + 1).join('0') + hexAddress;
         while (bytecode.indexOf(libLabel) >= 0)
             bytecode = bytecode.replace(libLabel, hexAddress);
@@ -545,7 +545,7 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
     var to = args.address;
     var constant = args.abi.constant;
     var isConstructor = args.bytecode !== undefined;
-    if (data.slice(0, 2) != '0x')
+    if (data.slice(0, 2) !== '0x')
         data = '0x' + data;
 
     var gas = self.options.getGas ? self.options.getGas : 1000000;
