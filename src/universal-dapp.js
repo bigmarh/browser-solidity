@@ -23,8 +23,8 @@ function UniversalDApp (contracts, options) {
         this.addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511');
         this.addAccount('2ac6c190b09897cd8987869cc7b918cfea07ee82038d492abce033c75c1b1d0c');
     } else if (!web3.currentProvider) {
-        var host = options.host || "localhost";
-        var port = options.port || "8545";
+        var host = options.host || 'localhost';
+        var port = options.port || '8545';
         var rpc_url = options.getWeb3endpoint ? options.getWeb3endpoint() : ('http://' + host + ':' + port);
         web3.setProvider( new web3.providers.HttpProvider( rpc_url ) );
     }
@@ -47,7 +47,7 @@ UniversalDApp.prototype.getAccounts = function (cb) {
     if (!this.vm) {
         web3.eth.getAccounts(cb);
     } else {
-        if (!this.accounts) return cb("No accounts?");
+        if (!this.accounts) return cb('No accounts?');
 
         cb(null, Object.keys(this.accounts));
     }
@@ -65,11 +65,11 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
             }
         });
     } else {
-        if (!this.accounts) return cb("No accounts?");
+        if (!this.accounts) return cb('No accounts?');
 
         this.vm.stateManager.getAccountBalance(new Buffer(address, 'hex'), function (err, res) {
             if (err) {
-                cb("Account not found");
+                cb('Account not found');
             } else {
                 cb(null, new ethJSUtil.BN(res).toString(10));
             }
@@ -103,7 +103,7 @@ UniversalDApp.prototype.render = function () {
         .append( $('<div class="call"/>').text('Call') );
 
     this.$el.append( $('<div class="poweredBy" />')
-        .html("<a href='http://github.com/d11e9/universal-dapp'>Universal ÐApp</a> powered by The Blockchain") );
+        .html('<a href="http://github.com/d11e9/universal-dapp">Universal ÐApp</a> powered by The Blockchain') );
 
     this.$el.append( $legend );
     return this.$el;
@@ -178,7 +178,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
             $instance.append( $close );
         }
         var context = self.options.vm ? 'memory' : 'blockchain';
-        var $title = $('<span class="title"/>').text( contract.name + " at " + (self.options.vm ? '0x' : '') + address.toString('hex')  + ' (' + context + ')');
+        var $title = $('<span class="title"/>').text( contract.name + ' at ' + (self.options.vm ? '0x' : '') + address.toString('hex')  + ' (' + context + ')');
         $title.click(function(){
             $instance.toggleClass('hide');
         });
@@ -498,10 +498,10 @@ UniversalDApp.prototype.linkBytecode = function(contractName, cb) {
         return cb(null, bytecode);
     var m = bytecode.match(/__([^_]{1,36})__/);
     if (!m)
-        return cb("Invalid bytecode format.");
+        return cb('Invalid bytecode format.');
     var libraryName = m[1];
     if (!this.getContractByName(libraryName))
-        return cb("Library " + libraryName + " not found.");
+        return cb('Library ' + libraryName + ' not found.');
     var self = this;
     this.deployLibrary(libraryName, function(err, address) {
         if (err) return cb(err);
@@ -536,7 +536,7 @@ UniversalDApp.prototype.deployLibrary = function(contractName, cb) {
 };
 
 UniversalDApp.prototype.clickContractAt = function ( self, $output, contract ) {
-    var address = prompt( "What Address is this contract at in the Blockchain? ie: '0xdeadbeaf...'" );
+    var address = prompt( 'What Address is this contract at in the Blockchain? ie: 0xdeadbeaf...' );
     self.getInstanceInterface(contract, address, $output );
 };
 
