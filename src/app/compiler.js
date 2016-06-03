@@ -60,9 +60,10 @@ function Compiler(web3, editor, handleGithubCall, outputField, hidingRHP, update
     editor.setAnnotations(sourceAnnotations);
   };
 
-  this.setCompileJSON = function() {
+  function setCompileJSON() {
     compileJSON = function(source, optimize) { compilationFinished('{}'); };  
   };
+  this.setCompileJSON = setCompileJSON;
 
   function onCompilerLoaded(setVersionText) {
     if (worker === null) {
@@ -127,6 +128,22 @@ function Compiler(web3, editor, handleGithubCall, outputField, hidingRHP, update
     else if (noFatalErrors && !hidingRHP())
       renderer.contracts(data, editor.getValue());
   }
+
+  this.loadVersion = function (version, setVersionText) {
+    Module = null;
+    setCompileJSON();
+    var newScript = document.createElement('script');
+    newScript.type = 'text/javascript';
+    newScript.src = 'https://ethereum.github.io/solc-bin/bin/' + version;
+    document.getElementsByTagName("head")[0].appendChild(newScript);
+    var check = window.setInterval(function () {
+      if (!Module) {
+        return;
+      }
+      window.clearInterval(check);
+      onCompilerLoaded(setVersionText);
+    }, 200);
+  };
 
   this.initializeWorker = function(version, setVersionText) {
     if (worker !== null)
