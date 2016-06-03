@@ -94,7 +94,6 @@ function Compiler(web3, editor, handleGithubCall, outputField, hidingRHP, update
     previousInput = '';
     onChange();
   };
-  this.onCompilerLoaded = onCompilerLoaded;
 
   function compilationFinished(result, missingInputs) {
     var data;
