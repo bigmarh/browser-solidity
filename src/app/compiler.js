@@ -1,3 +1,4 @@
+var webworkify = require('webworkify');
 var queryParams = require('./query-params');
 var utils = require('./utils');
 var Renderer = require('./renderer');
@@ -130,7 +131,7 @@ function Compiler(web3, editor, handleGithubCall, outputField, hidingRHP, update
   this.initializeWorker = function(version, setVersionText) {
     if (worker !== null)
       worker.terminate();
-    worker = new Worker('worker.js');
+    worker = webworkify(require('./compiler-worker.js'));
     worker.addEventListener('message', function(msg) {
       var data = msg.data;
       switch (data.cmd) {
