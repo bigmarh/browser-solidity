@@ -5,6 +5,7 @@ var EthJSTX = require('ethereumjs-tx');
 var ethJSABI = require('ethereumjs-abi');
 var EthJSBlock = require('ethereumjs-block');
 var web3 = require('./web3-adapter.js');
+var BN = ethJSUtil.BN;
 
 function UniversalDApp (contracts, options) {
     this.options = options || {};
@@ -15,7 +16,6 @@ function UniversalDApp (contracts, options) {
     if (options.vm) {
         this.accounts = {};
 
-        this.BN = ethJSUtil.BN;
         this.vm = new EthJSVM(null, null, { activatePrecompiles: true });
 
         this.addAccount('3cd7232cd6f3fc66a57a6bedc1a8ed6c228fff0a327e169c2bcc5e869ed49511');
@@ -69,7 +69,7 @@ UniversalDApp.prototype.getBalance = function (address, cb) {
             if (err) {
                 cb("Account not found");
             } else {
-                cb(null, new ethJSUtil.BN(res).toString(10));
+                cb(null, new BN(res).toString(10));
             }
         });
     }
@@ -584,7 +584,7 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
                 gasPrice: 1,
                 gasLimit: 3000000000, //plenty
                 to: to,
-                value: new this.BN(value, 10),
+                value: new BN(value, 10),
                 data: new Buffer(data.slice(2), 'hex')
             });
             tx.sign(account.privateKey);
