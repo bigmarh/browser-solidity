@@ -128,21 +128,23 @@ function Compiler(web3, editor, handleGithubCall, outputField, hidingRHP, update
   }
 
   this.loadVersion = function (usingWorker, version, setVersionText) {
+    var url = 'https://ethereum.github.io/solc-bin/bin/' + version;
+
     if (usingWorker) {
-      loadWorker(version, setVersionText);
+      loadWorker(url, setVersionText);
     } else {
-      loadInternal(version, setVersionText);
+      loadInternal(url, setVersionText);
     }
   };
 
-  function loadInternal (version, setVersionText) {
+  function loadInternal (url, setVersionText) {
     Module = null;
     // Set a safe fallback until the new one is loaded
     compileJSON = function(source, optimize) { compilationFinished('{}'); };
 
     var newScript = document.createElement('script');
     newScript.type = 'text/javascript';
-    newScript.src = 'https://ethereum.github.io/solc-bin/bin/' + version;
+    newScript.src = url;
     document.getElementsByTagName("head")[0].appendChild(newScript);
     var check = window.setInterval(function () {
       if (!Module) {
@@ -153,7 +155,7 @@ function Compiler(web3, editor, handleGithubCall, outputField, hidingRHP, update
     }, 200);
   }
 
-  function loadWorker (version, setVersionText) {
+  function loadWorker (url, setVersionText) {
     if (worker !== null)
       worker.terminate();
     worker = webworkify(require('./compiler-worker.js'));
@@ -174,7 +176,7 @@ function Compiler(web3, editor, handleGithubCall, outputField, hidingRHP, update
     compileJSON = function(source, optimize) {
       worker.postMessage({cmd: 'compile', source: source, optimize: optimize});
     };
-    worker.postMessage({cmd: 'loadVersion', data: 'https://ethereum.github.io/solc-bin/bin/' + version});
+    worker.postMessage({cmd: 'loadVersion', data: url});
   };
 
   function gatherImports(files, importHints, cb) {
