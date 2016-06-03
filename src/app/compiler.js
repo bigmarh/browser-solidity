@@ -60,7 +60,13 @@ function Compiler(web3, editor, handleGithubCall, outputField, hidingRHP, update
     editor.setAnnotations(sourceAnnotations);
   };
 
-  function onCompilerLoaded(setVersionText) {
+  function onCompilerLoaded (setVersionText, version) {
+    setVersionText(version);
+    previousInput = '';
+    onChange();
+  }
+
+  function onInternalCompilerLoaded (setVersionText) {
     if (worker === null) {
       var compile;
       var missingInputs = [];
@@ -89,11 +95,9 @@ function Compiler(web3, editor, handleGithubCall, outputField, hidingRHP, update
         }
         compilationFinished(result, missingInputs);
       };
-      setVersionText(Module.cwrap("version", "string", [])());
+      onCompilerLoaded(setVersionText, Module.cwrap("version", "string", [])());
     }
-    previousInput = '';
-    onChange();
-  };
+  }
 
   function compilationFinished(result, missingInputs) {
     var data;
@@ -145,7 +149,7 @@ function Compiler(web3, editor, handleGithubCall, outputField, hidingRHP, update
         return;
       }
       window.clearInterval(check);
-      onCompilerLoaded(setVersionText);
+      onInternalCompilerLoaded(setVersionText);
     }, 200);
   }
 
@@ -157,9 +161,8 @@ function Compiler(web3, editor, handleGithubCall, outputField, hidingRHP, update
       var data = msg.data;
       switch (data.cmd) {
       case 'versionLoaded':
-        setVersionText(data.data);
         compilerAcceptsMultipleFiles = !!data.acceptsMultipleFiles;
-        onCompilerLoaded(setVersionText);
+        onCompilerLoaded(setVersionText, data.data);
         break;
       case 'compiled':
         compilationFinished(data.data, data.missingInputs);
