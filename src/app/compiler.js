@@ -60,11 +60,6 @@ function Compiler(web3, editor, handleGithubCall, outputField, hidingRHP, update
     editor.setAnnotations(sourceAnnotations);
   };
 
-  function setCompileJSON() {
-    compileJSON = function(source, optimize) { compilationFinished('{}'); };  
-  };
-  this.setCompileJSON = setCompileJSON;
-
   function onCompilerLoaded(setVersionText) {
     if (worker === null) {
       var compile;
@@ -131,7 +126,9 @@ function Compiler(web3, editor, handleGithubCall, outputField, hidingRHP, update
 
   this.loadVersion = function (version, setVersionText) {
     Module = null;
-    setCompileJSON();
+    // Set a safe fallback until the new one is loaded
+    compileJSON = function(source, optimize) { compilationFinished('{}'); };
+
     var newScript = document.createElement('script');
     newScript.type = 'text/javascript';
     newScript.src = 'https://ethereum.github.io/solc-bin/bin/' + version;
