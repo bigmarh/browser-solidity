@@ -7,7 +7,7 @@ var utils = require('./utils');
 function Renderer(web3, editor, compiler, updateFiles) {
 
   var detailsOpen = {};
-  var executionContext = 'vm';
+  var executionContext = 'web3';
 
   // Forcing all of this setup into its own scope.
   (function(){
@@ -37,7 +37,7 @@ function Renderer(web3, editor, compiler, updateFiles) {
     if (web3.providers && web3.currentProvider instanceof web3.providers.IpcProvider)
       $web3endpoint.val('ipc');
 
-    $vmToggle.get(0).checked = true;
+    //$vmToggle.get(0).checked = true;
 
     $vmToggle.on('change', executionContextChange );
     $web3Toggle.on('change', executionContextChange );
@@ -102,9 +102,9 @@ function Renderer(web3, editor, compiler, updateFiles) {
     var dapp = new UniversalDApp(udappContracts, {
       vm: executionContext === 'vm',
       removable: false,
-      getAddress: function(){ return $('#txorigin').val(); },
+      getAddress: function(){ return currentAccount().address; },
       getValue: function(){
-        var comp = $('#value').val().split(' ');
+        var comp = [0,'wei'];
         return web3.toWei(comp[0], comp.slice(1).join(' '));
       },
       removable_instances: true,
@@ -123,17 +123,6 @@ function Renderer(web3, editor, compiler, updateFiles) {
 
     var $txOrigin = $('#txorigin');
 
-    function renderAccounts(err, accounts) {
-      if (err)
-        renderError(err.message);
-      if (accounts && accounts[0]){
-        $txOrigin.empty();
-        for( var a in accounts) { $txOrigin.append($('<option />').val(accounts[a]).text(accounts[a])); }
-        $txOrigin.val(accounts[0]);
-      } else $txOrigin.val('unknown');
-    }
-
-    dapp.getAccounts(renderAccounts);
 
     $contractOutput.find('.title').click(function(ev){ $(this).closest('.contract').toggleClass('hide'); });
     $('#output').append( $contractOutput );
@@ -241,7 +230,7 @@ function Renderer(web3, editor, compiler, updateFiles) {
     });
 
     code += "\n   {"+
-    "\n     from: web3.eth.accounts[0], "+
+    "\n     from: currentAccount().address, "+
     "\n     data: '"+bytecode+"', "+
     "\n     gas: 3000000"+
     "\n   }, function(e, contract){"+
